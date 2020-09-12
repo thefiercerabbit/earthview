@@ -106,7 +106,7 @@ class pics_infos_crawler():
 			return
 		urllib.request.urlretrieve(infos["photoUrl"].strip("\""),"/."+infos["id"].strip("\"")+".jpg")
 		
-	def output_to_csv(self,output_file='./prettyearth.csv'):
+	def output_to_csv(self,output_file='./earthview.csv'):
 		with open(output_file, "w", newline='') as csv_file:
 			csv_writer = csv.writer(csv_file)
 			csv_writer.writerow(self.list_of_keys)
@@ -115,7 +115,7 @@ class pics_infos_crawler():
 			for r in rows:
 				csv_writer.writerow(r)
 		
-	def input_from_csv(self,input_file='./prettyearth.csv'):
+	def input_from_csv(self,input_file='./earthview.csv'):
 		with open(input_file,'r') as csv_file:
 			reader = csv.reader(csv_file)
 			proc_keys = ', '.join(self.list_of_keys)
@@ -136,7 +136,7 @@ class pics_infos_crawler():
 		return int(self.cursor.fetchone()[0])
 		
 if __name__ == "__main__":
-	db_name = "./prettyearth.db"
+	db_name = "./earthview.db"
 	with sqlite3.connect(db_name) as db_conn:
 		P = pics_infos_crawler(db_conn)
 		P.initialize_database()
