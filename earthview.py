@@ -136,7 +136,7 @@ class pics_infos_crawler():
 		return int(self.cursor.fetchone()[0])
 		
 if __name__ == "__main__":
-	db_name = "/home/pnenp/prettyearth/prettyearth.db"
+	db_name = "./prettyearth.db"
 	with sqlite3.connect(db_name) as db_conn:
 		P = pics_infos_crawler(db_conn)
 		P.initialize_database()
