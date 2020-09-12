@@ -102,11 +102,11 @@ class pics_infos_crawler():
 		return None
 				
 	def download_picture(self,infos):
-		if os.path.exists("/home/pnenp/prettyearth/"+infos["id"].strip("\"")+".jpg"):
+		if os.path.exists("./"+infos["id"].strip("\"")+".jpg"):
 			return
-		urllib.request.urlretrieve(infos["photoUrl"].strip("\""),"/home/pnenp/prettyearth/"+infos["id"].strip("\"")+".jpg")
+		urllib.request.urlretrieve(infos["photoUrl"].strip("\""),"/."+infos["id"].strip("\"")+".jpg")
 		
-	def output_to_csv(self,output_file='/home/pnenp/prettyearth/prettyearth.csv'):
+	def output_to_csv(self,output_file='./prettyearth.csv'):
 		with open(output_file, "w", newline='') as csv_file:
 			csv_writer = csv.writer(csv_file)
 			csv_writer.writerow(self.list_of_keys)
@@ -115,7 +115,7 @@ class pics_infos_crawler():
 			for r in rows:
 				csv_writer.writerow(r)
 		
-	def input_from_csv(self,input_file='/home/pnenp/prettyearth/prettyearth.csv'):
+	def input_from_csv(self,input_file='./prettyearth.csv'):
 		with open(input_file,'r') as csv_file:
 			reader = csv.reader(csv_file)
 			proc_keys = ', '.join(self.list_of_keys)
