@@ -106,20 +106,26 @@ class pics_infos_crawler():
 			return
 		urllib.request.urlretrieve(infos["photoUrl"].strip("\""),"/."+infos["id"].strip("\"")+".jpg")
 		
-	def output_to_csv(self,output_file='./prettyearth.csv'):
+	def output_to_csv(self,output_file='./earthview.csv'):
 		with open(output_file, "w", newline='') as csv_file:
+			print("Updating CSV from database...")
 			csv_writer = csv.writer(csv_file)
 			csv_writer.writerow(self.list_of_keys)
 			self.cursor.execute("SELECT * FROM pics_infos")
 			rows = self.cursor.fetchall()
+			count = 0
 			for r in rows:
 				csv_writer.writerow(r)
+				count+=1
+			print(str(count)+" entries have been written.")
 		
-	def input_from_csv(self,input_file='./prettyearth.csv'):
+	def input_from_csv(self,input_file='./earthview.csv'):
 		with open(input_file,'r') as csv_file:
 			reader = csv.reader(csv_file)
+			print("Updating database from CSV...")
 			proc_keys = ', '.join(self.list_of_keys)
 			row_holder = ', '.join('?' * len(self.list_of_keys))
+			count = 0
 			for l in reader:
 				try:
 					if l == self.list_of_keys:
@@ -127,19 +133,21 @@ class pics_infos_crawler():
 					query = 'INSERT INTO pics_infos (%s) VALUES (%s)' % (proc_keys,row_holder)
 					self.cursor.execute(query,l)
 					self.db_conn.commit()
+					count+=1
 				except sqlite3.Error as err:
 					print(err, file=sys.stderr)
-
+			print(str(count)+" entries have been processed.")
 	
 	def get_number_of_pics(self):
 		self.cursor.execute("SELECT count(*) FROM pics_infos")
 		return int(self.cursor.fetchone()[0])
 		
 if __name__ == "__main__":
-	db_name = "./prettyearth.db"
+	db_name = "./earthview.db"
 	with sqlite3.connect(db_name) as db_conn:
 		P = pics_infos_crawler(db_conn)
 		P.initialize_database()
+		P.input_from_csv()
 		slug = P.get_next_unknown_slug()
 		while slug:
 			infos = P.download_infos_from_slug(slug)
@@ -149,5 +157,4 @@ if __name__ == "__main__":
 		print("The database is complete! Total number of elements: "+str(P.get_number_of_pics()))
 		print("Output all database in CSV format...")
 		P.output_to_csv()
-#		P.input_from_csv()
 	db_conn.close()
